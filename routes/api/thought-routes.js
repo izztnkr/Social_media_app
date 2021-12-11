@@ -1,17 +1,28 @@
-// const router = require("express").Router();
-// const {
-//   addComment,
-//   addReply,
-//   removeComment,
-//   removeReply,
-// } = require("../../controllers/comment-controller");
+const router = require("express").Router();
+const {
+  getAllThoughts,
+  getThoughtById,
+  addThought,
+  updateThought,
+  addReaction,
+  removeThought,
+  removeReaction,
+} = require("../../controllers/thought-controller");
 
-// // /api/comments/<pizzaId>
-// router.route("/:pizzaId").post(addComment);
+//routes to get all thoughts and add thought
+router.route("/").get(getAllThoughts).post(addThought);
 
-// // /api/comments/<pizzaId>/<commentId>
-// router.route("/:pizzaId/:commentId").put(addReply).delete(removeComment);
+//routes to get a singular thought, delete the thought, and update a thought. All by Id
+router
+  .route("/:id")
+  .get(getThoughtById)
+  .delete(removeThought)
+  .put(updateThought);
 
-// router.route("/:pizzaId/:commentId/:replyId").delete(removeReply);
+//route to add a reactions to a Thought
+router.route("/:id/reactions").post(addReaction);
 
-// module.exports = router;
+//route to delete a reaction by Id
+router.route("/:id/reactions/:reactionId").delete(removeReaction);
+
+module.exports = router;
