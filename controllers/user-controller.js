@@ -1,39 +1,39 @@
-const { Pizza } = require("../models");
+const { User, Thought } = require("../models");
 
-const pizzaController = {
+const userController = {
   //the functions will go here as methods
 
-  // get all pizzas AKA "GET /api/pizzas"
-  getAllPizza(req, res) {
-    Pizza.find({})
-      .populate({
-        path: "comments",
-        select: "-__v",
-      })
+  // get all users AKA "GET /api/users"
+  getAllUsers(req, res) {
+    User.find({})
       .select("-__v")
       .sort({ _id: -1 })
-      .then((dbPizzaData) => res.json(dbPizzaData))
+      .then((dbUserData) => res.json(dbUserData))
       .catch((err) => {
         console.log(err);
         res.status(400).json(err);
       });
   },
 
-  // get one pizza by id
-  getPizzaById({ params }, res) {
-    Pizza.findOne({ _id: params.id })
+  // get one user by id
+  getUserById({ params }, res) {
+    User.findOne({ _id: params.id })
       .populate({
-        path: "comments",
+        path: "thoughts",
+        select: "-__v",
+      })
+      .populate({
+        path: "friends",
         select: "-__v",
       })
       .select("-__v")
-      .then((dbPizzaData) => {
-        // If no pizza is found, send 404
-        if (!dbPizzaData) {
-          res.status(404).json({ message: "No pizza found with this id!" });
+      .then((dbUserData) => {
+        // If no user is found, send 404
+        if (!dbUserData) {
+          res.status(404).json({ message: "No user found with this id!" });
           return;
         }
-        res.json(dbPizzaData);
+        res.json(dbUserData);
       })
       .catch((err) => {
         console.log(err);
@@ -41,41 +41,76 @@ const pizzaController = {
       });
   },
 
-  // createPizza AKA "POST /api/pizzas"
-  createPizza({ body }, res) {
-    Pizza.create(body)
-      .then((dbPizzaData) => res.json(dbPizzaData))
+  // createUser AKA "POST /api/users"
+  createUser({ body }, res) {
+    User.create(body)
+      .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.status(400).json(err));
   },
 
-  // update pizza by id AKA "PUT /api/pizzas/:id"
-  updatePizza({ params, body }, res) {
-    Pizza.findOneAndUpdate({ _id: params.id }, body, {
+  // update user by id AKA "PUT /api/users/:id"
+  updateUser({ params, body }, res) {
+    User.findOneAndUpdate({ _id: params.id }, body, {
       new: true,
       runValidators: true,
     })
-      .then((dbPizzaData) => {
-        if (!dbPizzaData) {
-          res.status(404).json({ message: "No pizza found with this id!" });
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          res.status(404).json({ message: "No user found with this id!" });
           return;
         }
-        res.json(dbPizzaData);
+        res.json(dbUserData);
       })
       .catch((err) => res.status(400).json(err));
   },
 
-  // delete pizza AKA DELETE /api/pizzas/:id
-  deletePizza({ params }, res) {
-    Pizza.findOneAndDelete({ _id: params.id })
-      .then((dbPizzaData) => {
-        if (!dbPizzaData) {
-          res.status(404).json({ message: "No pizza found with this id!" });
+  // delete user AKA DELETE /api/user/:id
+  deleteUser({ params }, res) {
+    User.findOneAndDelete({ _id: params.id })
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          res.status(404).json({ message: "No user found with this id!" });
           return;
         }
-        res.json(dbPizzaData);
+        res.json(dbUserData);
       })
       .catch((err) => res.status(400).json(err));
+  },
+
+  //add a friend to User
+  addFriend({ params, body }, res) {
+    console.log(body);
+    User.findOneAndUpdate(
+      { _id: params.id },
+      { $push: { friends: params.friendId } },
+      { new: true, runValidators: true }
+    )
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          res.status(404).json({ message: "No friend found for this user!" });
+          return;
+        }
+        res.json(dbUserData);
+      })
+      .catch((err) => res.json(err));
+  },
+
+  // remove friend by Id
+  removeFriend({ params }, res) {
+    User.findOneAndUpdate(
+      { _id: params.id },
+      { $pull: { friends: params.friendId } },
+      { new: true, runValidators: true }
+    )
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          res.status(404).json({ message: "No user found with this ID!" });
+          return;
+        }
+        res.json(dbUserData);
+      })
+      .catch((err) => res.json(err));
   },
 };
 
-module.exports = pizzaController;
+module.exports = userController;
