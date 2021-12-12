@@ -19,7 +19,7 @@ router
   .delete(removeThought)
   .put(updateThought);
 
-//route to add a reactions to a Thought
+//route to add a reaction to a Thought
 router.route("/:id/reactions").post(addReaction);
 
 //route to delete a reaction by Id

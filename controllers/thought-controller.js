@@ -17,7 +17,7 @@ const thoughtController = {
   getThoughtById({ params }, res) {
     Thought.findOne({ _id: params.id })
       .populate({
-        path: "reactions",
+        path: "reaction",
         select: "-__v",
       })
       .select("-__v")
@@ -76,7 +76,7 @@ const thoughtController = {
   addReaction({ params, body }, res) {
     Thought.findOneAndUpdate(
       { _id: params.id },
-      { $push: { reactions: body } },
+      { $push: { reaction: body } },
       { new: true, runValidators: true }
     )
       .then((dbThoughtData) => {
@@ -106,7 +106,7 @@ const thoughtController = {
   removeReaction({ params }, res) {
     Thought.findOneAndUpdate(
       { _id: params.id },
-      { $pull: { reactions: { reactionId: params.reactionId } } },
+      { $pull: { reaction: { reactionId: params.reactionId } } },
       { new: true }
     )
       .then((dbThoughtData) => res.json(dbThoughtData))
