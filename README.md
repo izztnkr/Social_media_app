@@ -1,4 +1,4 @@
-<h1 align ="center"> Social Network App </h1>
+<h1 align ="center"> Social Network API </h1>
 
 <h2 align="center">built with </h2>
 <p align="center">
@@ -21,7 +21,7 @@
 
   ## Description
   
-This project is, the back end of a social network application. User Story: 
+This project is, the back end of a social network API. User Story: 
 AS A social media startup
 I WANT an API for my social network that uses a NoSQL database
 SO THAT my website can handle large amounts of unstructured data
